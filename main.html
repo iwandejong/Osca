@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Osca, an Open Source Code Assistant.</title>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+        <meta charset="UTF-8">
+ 	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/png" sizes="256x256" href="osla256x256-02.png">
+        <link href="tailwind.css" rel="stylesheet">
+        <link href="taaailwindsource.css" rel="stylesheet">
+        <link href="Inter.ttf" rel="stylesheet">
+        <link href="style.css" rel="stylesheet">
+        <link href="font\font\css\materialdesignicons.min.css" rel="stylesheet">
+        <!--<link rel="preload" href="tailwind.config.js" as="script" crossorigin="anonymous">-->
+        <meta name="description" content="A minimalist and focused Cloud-based code editor that loves human."/>
+        <meta name=”robots” content="index, follow">
+        <style>
+            body {
+              font-family: 'Inter', sans-serif;
+            }
+        </style>
+        <script src="tailwind.config.js"></script>
+        <script src="jquery-3.6.0.min.js"></script>
+    </head>
+    <body class="overflow-hidden h-screen text-xs bg-gray-100 duration-300 select-none dark:bg-gray-900">
+        <div class="grid grid-cols-4 items-center"> <!-- Should add onscroll event jQuery-->
+            <div class="p-5 col-start-1 align-middle">
+                <p class="inline text-gradient-to-r from-green-400 to-blue-500 ml-2 hidden">
+                    <i class="mdi mdi-menu"></i>
+                </p>
+                <img src="osla256x256-02.png" class="w-6 duration-300 hover:opacity-80 cursor-pointer inline"/>
+                <p class="inline text-gradient-to-r from-green-400 to-blue-500 ml-2">
+                    An Open Source Code Assistant
+                </p>
+            </div>
+            <div class="col-start-2 col-end-4 search-whole-j">
+                <form class="flex m-0 mx-2 p-2">
+                    <input type="text" placeholder="Search Osca... (Press Ctrl + Q to Search)" class="bg-gray-100 border-b border-solid border-gray-300 hover:border-b-lg w-full hover:border-blue-400 duration-300 text-gray-800 outline-none text-sm" id="searchinput" autocomplete="off"></input>
+                </form>
+                <div id="searchmodal" class="search-results bg-gray-100 w-1/2 absolute h-1/2 shadow-lg rounded-md hidden">
+                    <div class="mx-2 my-1 p-2">
+                        <span class="text-gray-400"><i class="mdi mdi-close-circle text-red-500 cursor-pointer hover:text-red-400 clear-input-j"></i> Search Results for "<span id="type"></span>"</span>
+                    </div>
+                    <div id="search-j">
+                    <div class="duration-300 rounded-md cursor-pointer text-sm mx-4 mt-2 border-gray-200 border-solid border-b hover:bg-gray-100 p-2 query-j" title="Home">
+                        <p class="text-gray-800 rounded-md cursor-pointer result-j">
+                            <p id="" class="text-xs">
+                                <a href="#home" class="hover:opacity-70">Command Prompt</a>
+                                    <i class="mdi mdi-chevron-right"></i>
+                                <a href="#home#introduction" class="hover:opacity-70">Using cmd</a>
+                            </p>
+                            <div class="space-y-1 text-gray-700">
+                            <p class="text-blue-500 hover:opacity-70">Directing in cmd</p>
+                            </div>
+                        </p>
+                    </div>
+                    <div class="intro-nodejs duration-300 rounded-md cursor-pointer text-sm mx-4 mt-2 border-gray-200 border-solid border-b hover:bg-gray-100 p-2 query-j item-j" title="Home">
+                        <p class="text-gray-800 rounded-md cursor-pointer">
+                            <p id="" class="text-xs">
+                                <a href="#home" class="hover:opacity-70">Node.js</a>
+                                    <i class="mdi mdi-chevron-right"></i>
+                                <a href="#home#introduction" class="hover:opacity-70">Installing npm</a>
+                            </p>
+                            <div class="space-y-1 text-gray-700">
+                            <p class="text-blue-500 hover:opacity-70 result-j">Use cmd to install npm</p>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="grid grid-cols-4 h-screen m-1">
+            <div class="h-full col-start-1 justify-start overflow-y-scroll overflow-x-hidden pb-20">
+                <!--<div class="h-full bg-white">
+                    <div class="bg-red-400 h-full w-full"></div>
+                </div>-->
+                <div class="px-1">
+                    <p class="text-xl font-medium text-gray-800 m-2">Browse Libraries </p>
+                    <p class="text-xs text-gray-800 m-2 mb-4"><!--Filter by:--><span class="rounded-full text-xs text-gray-800 px-1">
+                      <span class="all hover:bg-gray-300 duration-300 bg-blue-500 text-gray-100 rounded-full px-1 mr-1 cursor-pointer filter-j all-j">All</span>
+                      <!--<span class="html hover:bg-gray-300 duration-300 rounded-full px-1 mr-1 cursor-pointer filter-j">HTML</span>-->
+                      <span class="css hover:bg-gray-300 duration-300 rounded-full px-1 mr-1 cursor-pointer filter-j">CSS</span>
+                      <span class="js hover:bg-gray-300 duration-300 rounded-full px-1 mr-1 cursor-pointer filter-j">JS</span>
+                      <span id="searchtest" class="hover:bg-gray-300 duration-300 rounded-full px-1 mr-1 cursor-pointer reset-view-j">Reset View</span>
+                      </span>
+                    </p>
+                </div>
+                <div class="text-sm mx-5 sidebar-filter-j">
+
+                    <!--<div class="duration-300 rounded-md cursor-pointer sub-filter-j" title="Home">
+                        <div class="text-gray-800 dark:text-gray-100 main-menu-j home-j">
+                        <!--<div class="collapsable-menu">
+                            <s class="hidden">all html css js</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer collapsable-menu">
+                            <i class="hover:opacity-100 opacity-70 mdi mdi-chevron-down rotate-chevron"></i>
+                            <i class="mdi mdi-home text-blue-500 dark:text-blue-500"></i>
+                            <span id="">Home</span></div>
+                        <!--</div>
+                            <div class="mx-4 mt-1 mb-2 text-gray-700 menu-items home-menu-j">
+                            <p class="welcome ml-5 text-blue-500 m-1 hover:opacity-70 item-j"> Welcome to Osca</p>
+                            <!--<p href="/docs/about" class="about ml-5 m-1 hover:opacity-70 item-j"> About</a>
+                            <p class="about ml-5 hover:opacity-70 m-1 item-j"> About</p>
+                            <p class="donate ml-5 hover:opacity-70 m-1 item-j"> Donate & Contribute</p>
+                            <p class="spreadword ml-5 hover:opacity-70 m-1 item-j"> Spread the word</p>
+                            <p><a href="https://github.com/iwandejong" class="github ml-5 m-1 hover:opacity-70 item-j">Github <i class="mdi mdi-arrow-top-right m-1 text-gray-400"></i></a></p>
+                            <p class="feedback ml-5 hover:opacity-70 m-1 item-j"> Feedback</p>
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="sort-library-j">
+                    <div class="duration-300 rounded-md cursor-pointer sub-filter-j" id="" title="Home">
+                        <div class="text-gray-800 dark:text-gray-100 main-menu-j">
+                        <!--<div class="collapsable-menu">-->
+                            <s class="hidden">all</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer collapsable-menu">
+                            <i class="hover:opacity-100 opacity-70 mdi mdi-chevron-right rotate-chevron"></i>
+                            <i class="mdi mdi-nodejs text-blue-500 dark:text-blue-500"></i>
+                            <span class="sort-j">Using cmd and npm</span></div>
+                        <!--</div>-->
+                            <div class="mx-4 mt-1 mb-2 space-y-1 text-gray-700 menu-items hidden">
+                            <p class="welcome ml-5 hover:opacity-70 item-j"> Introduction to cmd</p>
+                            <p class="about ml-5 hover:opacity-70 item-j"> Using cmd</p>
+                            <p class="intro-nodejs ml-5 hover:opacity-70 item-j"> Introduction to Node.js</p>
+                            <p class="spreadword ml-5 hover:opacity-70 item-j"> Installing npm</p>
+                            <p class="github ml-5 hover:opacity-70">Generating with npm</p>
+                            <p class="feedback ml-5 hover:opacity-70 item-j"> General Tips & Tricks</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="duration-300 rounded-md cursor-pointer sub-filter-j" title="Home">
+                        <div class="text-gray-800 dark:text-gray-100 main-menu-j">
+                        <!--<div class="collapsable-menu">-->
+                            <s class="hidden">all js</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer collapsable-menu">
+                            <i class="hover:opacity-100 opacity-70 mdi mdi-chevron-right rotate-chevron"></i>
+                            <i class="mdi mdi-jquery text-blue-500 dark:text-blue-500"></i>
+                            <span class="sort-j">jQuery</span></div>
+                        <!--</div>-->
+                            <div class="mx-4 mt-1 mb-2 space-y-1 text-gray-700 menu-items hidden">
+                            <p class="ml-5 hover:opacity-70 item-j"> Introduction</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Installation</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Donate</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Spread the word</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Github</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Feedback</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="duration-300 rounded-md cursor-pointer sub-filter-j" title="Home">
+                        <div class="text-gray-800 dark:text-gray-100 main-menu-j">
+                        <!--<div class="collapsable-menu">-->
+                            <s class="hidden">all html css</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer collapsable-menu">
+                            <i class="hover:opacity-100 opacity-70 mdi mdi-chevron-right rotate-chevron"></i>
+                            <i class="mdi mdi-tailwind text-blue-500 dark:text-blue-500"></i>
+                            <span class="sort-j">Tailwind CSS</span></div>
+                        <!--</div>-->
+                            <div class="mx-4 mt-1 mb-2 space-y-1 text-gray-700 menu-items hidden">
+                            <p class="ml-5 hover:opacity-70 item-j"> Welcome to Osca</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> About</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Donate</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Spread the word</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Github</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Feedback</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="duration-300 rounded-md cursor-pointer sub-filter-j" title="Home">
+                        <div class="text-gray-800 dark:text-gray-100 main-menu-j">
+                        <!--<div class="collapsable-menu">-->
+                            <s class="hidden">all html css</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer collapsable-menu">
+                            <i class="hover:opacity-100 opacity-70 mdi mdi-chevron-right rotate-chevron"></i>
+                            <i class="mdi mdi-material-design text-blue-500 dark:text-blue-500"></i>
+                            <span class="sort-j">Material Design Icons</span></div>
+                        <!--</div>-->
+                            <div class="mx-4 mt-1 mb-2 space-y-1 text-gray-700 menu-items hidden">
+                            <p class="ml-5 hover:opacity-70 item-j"> Welcome to Osca</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> About</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Donate</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Spread the word</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Github</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Feedback</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="duration-300 rounded-md cursor-pointer sub-filter-j" title="Home">
+                        <div class="text-gray-800 dark:text-gray-100 main-menu-j">
+                        <!--<div class="collapsable-menu">-->
+                            <s class="hidden">all html css</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer collapsable-menu">
+                            <i class="hover:opacity-100 opacity-70 mdi mdi-chevron-right rotate-chevron"></i>
+                            <i class="mdi mdi-font-awesome text-blue-500 dark:text-blue-500"></i>
+                            <span class="sort-j">Font Awesome</span></div>
+                        <!--</div>-->
+                            <div class="mx-4 mt-1 mb-2 space-y-1 text-gray-700 menu-items hidden">
+                            <p class="ml-5 hover:opacity-70 item-j"> Welcome to Osca</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> About</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Donate</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Spread the word</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Github</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Feedback</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="duration-300 rounded-md cursor-pointer sub-filter-j" title="Home">
+                        <div class="text-gray-800 dark:text-gray-100 main-menu-j">
+                        <!--<div class="collapsable-menu">-->
+                            <s class="hidden">all html css</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer collapsable-menu">
+                            <i class="hover:opacity-100 opacity-70 mdi mdi-chevron-right rotate-chevron"></i>
+                            <i class="mdi mdi-bootstrap text-blue-500 dark:text-blue-500"></i>
+                            <span id="">Bootstrap</span></div>
+                        <!--</div>-->
+                            <div class="mx-4 mt-1 mb-2 space-y-1 text-gray-700 menu-items hidden">
+                            <p class="ml-5 hover:opacity-70 item-j"> Welcome to Osca</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> About</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Donate</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Spread the word</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Github</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Feedback</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="duration-300 rounded-md cursor-pointer sub-filter-j" title="Home">
+                        <div class="text-gray-800 dark:text-gray-100 main-menu-j">
+                        <!--<div class="collapsable-menu">-->
+                            <s class="hidden">all js</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer collapsable-menu">
+                            <i class="hover:opacity-100 opacity-70 mdi mdi-chevron-right rotate-chevron"></i>
+                            <i class="mdi mdi-nodejs text-blue-500 dark:text-blue-500"></i>
+                            <span class="sort-j">Node.js</span></div>
+                        <!--</div>-->
+                            <div class="mx-4 mt-1 mb-2 space-y-1 text-gray-700 menu-items hidden">
+                            <p class="ml-5 hover:opacity-70 item-j"> Welcome to Osca</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> About</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Donate</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Spread the word</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Github</p>
+                            <p class="ml-5 hover:opacity-70 item-j"> Feedback</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="duration-300 rounded-md cursor-pointer" title="Home">
+                        <a class="text-gray-800 dark:text-gray-100" href="https://stackoverflow.com/questions/ask">
+                        <!--<div class="collapsable-menu">-->
+                            <s class="hidden">all html css js</s>
+                            <div class="hover:bg-gray-200 rounded-md p-1 duration-300 ml-2 mr-2  cursor-pointer">
+                            <i class="mdi mdi-stack-overflow text-blue-500 dark:text-blue-500"></i>
+                            <span id="">Ask a Question <i class="text-gray-400"></i></span></div>
+                        <!--</div>-->
+                            </a>
+                    </div>
+                    </div>
+                  </div>
+            <div class="h-full pb-20 col-start-2 col-end-5 overflow-y-scroll overflow-x-hidden select-text">
+                <!--<div class="h-full bg-white">
+                    <div class="bg-blue-400 h-full w-full"></div>
+                </div>-->
+
+                <!--PAGE-->
+                <section class="welcome page-j section">
+                <div class="mx-10 mt-2">
+                    <p class="text-xl font-medium text-gray-800 mb-1"><i class="mdi mdi-home text-blue-500"></i> Welcome to Osca </p>
+                    <p class="text-sm text-gray-800">
+                    Tabbing between the webpages to find the right information was always a problem. <br><br>We are proud to introduce Osca, a minimal and focused open source digital library that supplies documentation on all the frameworks you love in one tab. We will be continuing to expand with even more frameworks to bring you the best experience.<br><br>Start browsing by selecting any library on the left...<br><br>            
+                    </p>
+                </div>
+                </section>
+
+                <!--PAGE-->
+                <section class="about hidden page-j section">
+                <div class="mx-10 mt-2">
+                    <p class="text-xl font-medium text-gray-800 mb-1"><i class="mdi mdi-code-tags text-blue-500"></i> About Osca </p>
+                    <p class="text-sm text-gray-800">
+                    Welcome to the Osca community! Here is a bit of fanformation ;)<br><br>
+                    Osca started in 2021 as an initiative with self-taught coder and matriculant, Iwan de Jong<a href="https://www.linkedin.com/iwandejong" class="text-blue-500 hover:opacity-70"><i class="mdi mdi-linkedin"></i></a> in the frustration of searching for every line of code on the 'net. <br><br>Osca is currently striving to ease the process of coding by giving clear information on every language (currently only Front-end languages and frameworks). The idea is not to kill documentation-websites from their respective owners, instead, Osca compiles useful information on the web and translates it into a minimal and focused website for users to access easily.</p>
+                    <div class="grid grid-cols-8 grid-rows-1 gap-3 my-10">
+                        <div class="col-start-1 row-start-1 p-5 bg-gradient-to-tr from-blue-600 to-green-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                            <p class="text-white text-2xl"><i class="mdi mdi-menu"></i></p>
+                        </div>
+                        <div class="p-5 bg-gradient-to-tr from-blue-600 to-green-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                            <p class="text-white text-2xl"><i class="mdi mdi-iframe"></i></p>
+                        </div>
+                        <div class="p-5 bg-gradient-to-tr from-blue-600 to-green-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                            <p class="text-white text-2xl"><i class="mdi mdi-target"></i></p>
+                        </div>
+                        <div class="p-5 bg-gradient-to-tr from-blue-600 to-green-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                            <p class="text-white text-2xl"><i class="mdi mdi-github"></i></p>
+                        </div>
+                        <div class="p-5 bg-gradient-to-tr from-blue-600 to-green-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                            <p class="text-white text-2xl"><i class="mdi mdi-account-group"></i></p>
+                        </div>
+                        <div class="p-5 bg-gradient-to-tr from-blue-600 to-green-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                            <p class="text-white text-2xl"><i class="mdi mdi-download"></i></p>
+                        </div>
+                        <div class="row-start-2 justify-center flex items-center text-center">
+                            Intuitive UI
+                        </div>
+                        <div class="col-start-2 justify-center flex items-center text-center">
+                            All your frameworks in one place
+                        </div>
+                        <div class="col-start-3 justify-center flex items-center text-center">
+                            Focused on the important information
+                        </div>
+                        <div class="col-start-4 justify-center flex items-center text-center">
+                            Open Source
+                        </div>
+                        <div class="col-start-5 justify-center flex items-center text-center">
+                            Feedback-based community
+                        </div>
+                        <div class="col-start-6 justify-center flex items-center text-center">
+                            Downloadable Software (coming soon!) 
+                        </div>
+                        </div>
+                    <p class="text-sm text-gray-800">
+                    Osca is currently using Github as a main source for contributions and feedback, but more features are on the horizon and you can keep up-to-date by <span class="spreadword item-j text-blue-500 hover:opacity-70 cursor-pointer" style="color: rgb(59, 130, 246);">subscribing to our newsletter</span> or by <a href="https://www.linkedin.com/iwandejong" class="text-blue-500 hover:opacity-70">following Osca on Github</a>.<br><br>
+                    Happy coding!<br>
+                    Iwan de Jong<br>
+                    <span class="text-blue-500 text-xs">Founder</span>             
+                    </p>
+                </p>
+                </div>
+                </section>
+                
+                <!--PAGE-->
+                <section class="donate hidden page-j section">
+                    <div class="mx-10 mt-2">
+                        <p class="text-xl font-medium text-gray-800 mb-1"><i class="mdi mdi-home text-blue-500"></i> Donations & Contributions </p>
+                        <div class="text-sm text-gray-800">
+                        As mentioned before, this website is not complete and can do with a lot more features and improvements both on the front-end as well as the back-end. For that reason, any support will be taken at heart!
+                        <div class="mt-5">
+                            <p class="text-base font-medium">Donations</p>
+                            To keep this website up and running, there are cost-related duties to maintain it. Any donations are welcome and can be done via PayPal (<a href="https://www.paypal.me/roelofdj" class="text-blue-500 hover:opacity-70">Donate</a>). <a href="https://www.paypal.me/roelofdj" class="text-blue-500 hover:opacity-70">Contact the Developer</a> for alternate solutions. 
+                        </div>  
+                        <div class="mt-5">
+                            <p class="text-base font-medium">Contributions</p>
+                            There are a number of things which need some panelbeating. Your contributions will be very helpful!* Here are a few:
+                                <ul class="mx-3 my-3 space-y-4 p-1">
+                                    <li class="grid grid-cols-4 border-b border-solid border-gray-300 align-middle"><p class="col-start-1 col-end-4">Website should not return to normal state and should stay on current window when refreshing</p><a href="https://www.paypal.me/roelofdj" class="text-blue-500 hover:opacity-70 col-start-4">Contribute on Github <i class="mdi mdi-arrow-top-right"></i></a></li>
+                                    <li class="grid grid-cols-4 border-b border-solid border-gray-300 align-middle"><p class="col-start-1 col-end-4">Mobile Design needs a lot of work (using Tailwind CSS)</p><a href="https://www.paypal.me/roelofdj" class="text-blue-500 hover:opacity-70 col-start-4">Contribute on Github <i class="mdi mdi-arrow-top-right"></i></a></li>
+                                    <li class="grid grid-cols-4 border-b border-solid border-gray-300 align-middle"><p class="col-start-1 col-end-4">Some "suggestion tab" on Search</p><a href="https://www.paypal.me/roelofdj" class="text-blue-500 hover:opacity-70 col-start-4">Contribute on Github <i class="mdi mdi-arrow-top-right"></i></a></li>
+                                    <li class="grid grid-cols-4 border-b border-solid border-gray-300 align-middle"><p class="col-start-1 col-end-4">More keyboard shortcuts as developers don't like using the mouse too often</p><a href="https://www.paypal.me/roelofdj" class="text-blue-500 hover:opacity-70 col-start-4">Contribute on Github <i class="mdi mdi-arrow-top-right"></i></a></li>
+                                    <li class="grid grid-cols-4 border-b border-solid border-gray-300 align-middle"><p class="col-start-1 col-end-4">Setup a new Documentation on a specific framework <a href="" class="text-xs">(See guidelines)</a></p><a href="https://www.paypal.me/roelofdj" class="text-blue-500 hover:opacity-70 col-start-4">Contribute on Github <i class="mdi mdi-arrow-top-right"></i></a></li>
+                                    <li class="grid grid-cols-4 border-b border-solid border-gray-300 align-middle"><p class="col-start-1 col-end-4">Any other ideas/improvements? Why hesitate?</p><a href="https://www.paypal.me/roelofdj" class="text-blue-500 hover:opacity-70 col-start-4">Contribute on Github <i class="mdi mdi-arrow-top-right"></i></a></li>
+                                </ul>
+                                <span class="text-xs">* Contributions are adapted to webpage in order to go with the flow of the website. Osca deserves the right to decline contributions as well.</span>
+                            </div>          
+                    </div>
+                    </div>
+                    
+                    </section>
+
+                    <section class="intro-nodejs hidden page-j section">    
+                <div class="mx-10 mt-2">
+                    <p class="text-xl font-medium text-gray-800 mb-1">
+                        <i class="mdi mdi-nodejs text-blue-500"></i>
+                        <span>Node.js</span>
+                        <a href="#">
+                            <i class="mdi mdi-web text-gray-300"></i>
+                        </a>
+                        <a href="#">
+                            <i class="mdi mdi-share text-gray-300"></i>
+                        </a>
+                    </p>
+                    <div class="mt-5">
+                        <p class="text-base font-medium">Why Node.js?</p>
+                        <p class="text-sm">
+                            Tabbing between the webpages to find the right information was always a problem. <br><br>We are proud to introduce Osca, a minimal and focused open source digital library that supplies <a href="#" class="text-blue-500 hover:opacity-70">documentation</a> on all the frameworks you love in one tab. We will be    continuing to expand with even more frameworks to bring you the best experience.   <br><br>Start browsing by <span class="bg-gray-600 px-1 rounded-md text-gray-200 font-mono">selecting any library</span> on the left...
+                        </p>
+                    </div>
+                    <div class="mt-5">
+                    <p class="text-base font-medium">Installation</p>
+                    <p class="text-sm">
+                    Tabbing between the webpages to find the right information was always a problem. <br><br>We are proud to introduce Osca, a minimal and focused open source digital library that supplies documentation on all the frameworks you love in one tab. We will be    continuing to expand with even more frameworks to bring you the best experience.   <br><br>Start browsing by selecting any library on the left...
+                    </p>
+                    </div>
+                    
+                    <div class="w-full my-3">
+                        
+                        <div class="w-full justify-start pr-2 inline">
+                            <p" class="justify-end text-sm text-blue-500">
+                                Starting npm
+                            </a>
+                        </div>
+
+                        <div class="w-full justify-end inline">
+                            <a href="#" class="justify-end text-sm text-gray-500 hover:text-opacity-60 duration-300">
+                                <i class="mdi mdi-content-copy"></i>
+                                Copy
+                            </a>
+                        </div>
+
+                        <div class="bg-gray-700 rounded-md p-3 text-gray-200 mb-3 mt-1 font-mono text-sm shadow-lg">
+                            <p>npm start</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        <p class="text-base font-medium">Installation</p>
+                        <p class="text-sm">
+                        Tabbing between the webpages to find the right information was always a problem. <br><br>We are proud to introduce Osca, a minimal and focused open source digital library that supplies documentation on all the frameworks you love in one tab. We will be    continuing to expand with even more frameworks to bring you the best experience.   <br><br>Start browsing by selecting any library on the left...
+                        </p>
+                        </div>
+
+                                   
+                    </p>
+                </div>
+                </section>
+                
+                <!--PAGE-->
+                <section class="spreadword hidden page-j section">
+                    <div class="mx-10 mt-2">
+                        <p class="text-xl font-medium text-gray-800 mb-1"><i class="mdi mdi-share-variant text-blue-500"></i> Spread the word </p>
+                        <p class="text-sm text-gray-800">
+                        Why not spread the word when you love this website?            
+                        </p>
+                        <div class="grid grid-cols-8 grid-rows-2 gap-2 m-8 mb-10">
+                            <div class="col-start-1 row-start-1 p-5 bg-gradient-to-r from-pink-400 to-pink-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                                <p class="text-white text-2xl"><i class="mdi mdi-link"></i></p>
+                            </div>
+                            <div class="p-5 bg-gradient-to-r from-blue-300 to-blue-400 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                                <p class="text-white text-2xl"><i class="mdi mdi-twitter"></i></p>
+                            </div>
+                            <div class="p-5 bg-gradient-to-r from-yellow-400 via-red-500 to-purple-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                                <p class="text-white text-2xl"><i class="mdi mdi-instagram"></i></p>
+                            </div>
+                            <div class="p-5 bg-gradient-to-r from-blue-500 to-blue-600 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                                <p class="text-white text-2xl"><i class="mdi mdi-facebook"></i></p>
+                            </div>
+                            <div class="p-5 bg-gradient-to-r from-blue-300 to-blue-400 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                                <p class="text-white text-2xl"><i class="mdi mdi-email"></i></p>
+                            </div>
+                            <div class="p-5 bg-red-500 flex items-center align-middle justify-center rounded-md duration-300 hover:shadow-lg cursor-pointer">
+                                <p class="text-white text-2xl"><i class="mdi mdi-reddit"></i></p>
+                            </div>
+                            <div class="row-start-2 col-start-1 col-end-5 mt-5">
+                                    <input type="text" value="osca.io" class="bg-gray-100 border-b border-solid border-gray-300 hover:border-b-lg hover:border-blue-400 duration-300 text-gray-800 outline-none text-sm p-2" onClick="this.setSelectionRange(0, this.value.length)" autocomplete="off" required>
+                                    <button type="submit" value="Copy Link" class="bg-blue-500 border rounded-full px-6 border-solid border-white hover:border-b-lg hover:bg-blue-600 duration-300 text-white outline-none text-sm p-1 cursor-pointer hover:text-gray-100 hover:shadow-lg inline">Copy Link</button>
+                            </div>
+
+                            <div class="row-start-3 col-start-1 col-end-5 mt-5">
+                                <p class="text-base font-medium py-2">Subscribe to our Newsletter!</p>
+                                <input type="text" placeholder="Enter email address" class="bg-gray-100 border-b border-solid border-gray-300 hover:border-b-lg hover:border-blue-400 duration-300 text-gray-800 outline-none text-sm p-2" onClick="this.setSelectionRange(0, this.value.length)" autocomplete="off" required>
+                                <button type="submit" value="Copy Link" class="bg-blue-500 border rounded-full px-6 border-solid border-white hover:border-b-lg hover:bg-blue-600 duration-300 text-white outline-none text-sm p-1 cursor-pointer hover:text-gray-100 hover:shadow-lg inline">Subscribe</button>
+                        </div>
+                        </div>
+                    </div>
+                    </section>
+
+                <!--PAGE-->
+                <section class="feedback hidden page-j section">
+                    <div class="mx-10 mt-2">
+                        <p class="text-xl font-medium text-gray-800 mb-1"><i class="mdi mdi-message text-blue-500"></i> Feedback </p>
+                        <p class="text-sm text-gray-800">
+                        Your feedback is always valued! Please leave a message below and Osca will get back to you as soon as possible.
+                        </p>
+                        <div class="form m-8 mb-10">
+                            <form class="">
+                                <div class="grid grid-cols-2 grid-rows-3 gap-2 w-1/2 bg-gradient-to-r from-blue-400 to-blue-500 p-5 rounded-lg shadow-xl">
+                                    <div class="col-start-1 row-start-1 w-full m-2 ">
+                                        <input type="text" placeholder="Your name*" class="bg-gray-100 border-b border-solid border-gray-300 hover:border-b-lg hover:border-blue-400 duration-300 text-gray-800 outline-none text-sm p-2 w-full rounded-lg" autocomplete="off" required>
+                                    </div>
+                                    <div class="col-start-2 m-2">
+                                        <input type="email" placeholder="Your email*" class="bg-gray-100 border-b border-solid border-gray-300 hover:border-b-lg hover:border-blue-400 duration-300 text-gray-800 outline-none text-sm p-2 w-full rounded-lg" autocomplete="off" required>
+                                    </div>
+                                    <div class="col-start-1 row-start-2 col-end-3 m-2">
+                                        <input type="text" placeholder="Your message*" class="bg-gray-100 border-b border-solid border-gray-300 hover:border-b-lg hover:border-blue-400 duration-300 text-gray-800 outline-none text-sm p-2 w-full rounded-lg" autocomplete="off" required>
+                                    </div>
+                                    <div class="col-start-1 row-start-3 m-2 flex justify-end">
+                                        <input type="submit" value="Submit" class="bg-blue-500 border rounded-lg px-6 border-solid border-white hover:border-b-lg hover:bg-blue-600 duration-300 text-white outline-none text-sm p-1 block cursor-pointer hover:text-gray-100 hover:shadow-lg">
+                                        
+                                    </div>
+                                    <p class="text-xs text-white col-start-2 m-2">By submitting, you agree to Osca's <a href="#">Policy</a></p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    </section>
+
+                <div class="mx-10 mt-4">
+                    <a href="#" class="about item-j text-gray-400 hover:opacity-70">About</a>
+                    <span class="mx-1 text-gray-500">|</span>
+                    <a href="#" class="donate item-j text-gray-400 hover:opacity-70">Donate & Contribute</a>
+                    <!--<span class="mx-1 text-gray-500">|</span>
+                    <a href="#" class="text-gray-400 hover:opacity-70">Get updates on Twitter <i class="mdi mdi-arrow-top-right"></i></a>-->
+                    <span class="mx-1 text-gray-500">|</span>
+                    <a href="#" class="spreadword item-j text-gray-400 hover:opacity-70">Spread the word</a>
+                    <span class="mx-1 text-gray-500">|</span>
+                    <a href="https://github.com/iwandejong/osca" class="text-gray-400 hover:opacity-70">Github <i class="mdi mdi-arrow-top-right"></i></a>
+                    <span class="mx-1 text-gray-500">|</span>
+                    <a href="#" class="feedback item-j text-gray-400 hover:opacity-70">Feedback</a>
+                    <span class="mx-1 text-gray-500">|</span>
+                    <a href="#" class="text-gray-400 hover:opacity-70">MIT Policy</a>
+                    <span class="mx-1 text-gray-500">|</span>
+                    <a href="#" class="text-gray-400 hover:opacity-70">Privacy Policy</a> 
+                </div>
+            </div>
+        </div>
+        <script src="script.js"></script>
+
+    </body>
+</html>
